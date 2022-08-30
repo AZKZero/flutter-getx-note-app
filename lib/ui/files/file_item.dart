@@ -8,25 +8,31 @@ class FileItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-        onPressed: null,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Column(
-                children: [
-                  Image.asset(
-                    'assets/images/files/${file.split('.').last}.png',
-                    height: MediaQuery.of(context).size.height * 0.031,
+    return Center(
+      child: ElevatedButton(
+          onPressed: null,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        'assets/images/files/${file.split('.').last}.png',
+                        height: MediaQuery.of(context).size.height * 0.031,
+                      ),
+                      Text(
+                        file.split('/').last,
+                        style: const TextStyle(overflow: TextOverflow.ellipsis),
+                      )
+                    ],
                   ),
-                  Text(file.split('/').last)
-                ],
-              ),
-              IconButton(onPressed: () => onClear(file), icon: const Icon(Icons.close))
-            ],
-          ),
-        ));
+                ),
+                IconButton(onPressed: () => onClear(file), icon: const Icon(Icons.close))
+              ],
+            ),
+          )),
+    );
   }
 }

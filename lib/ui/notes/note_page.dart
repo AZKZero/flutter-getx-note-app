@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:badges/badges.dart';
 import 'package:cipers_cluster/controllers/db_controller.dart';
 import 'package:cipers_cluster/database/drift_database.dart';
-import 'package:cipers_cluster/ui/files/file_item.dart';
+import 'package:cipers_cluster/ui/dialogs/dialog_files.dart';
+import 'package:cipers_cluster/ui/extensions/dialog_extensions.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
@@ -38,6 +40,10 @@ class NotePage extends StatelessWidget {
   List<PlatformFile>? files;
   RxList<String> paths = RxList.empty(growable: true);
 
+  void showFiles() async {
+    Get.dialog(DialogWrapper(child: DialogFiles(callback: pickFile, paths: paths, onClear: onClear)));
+  }
+
   void pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
 
@@ -61,7 +67,16 @@ class NotePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(note != null ? 'Edit Note' : 'New Note'),
-        actions: [IconButton(onPressed: pickFile, icon: const Icon(Icons.attachment))],
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Obx(() => Badge(
+                  badgeColor: Colors.green,
+                  badgeContent: paths.isEmpty ? null : Text(paths.length.toString()),
+                  child: IconButton(onPressed: showFiles, icon: const Icon(Icons.attachment)),
+                )),
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -74,21 +89,6 @@ class NotePage extends StatelessWidget {
           ),
           const SizedBox(
             height: 10,
-          ),
-          Container(
-            height: MediaQuery.of(context).size.height * 0.07,
-            padding: const EdgeInsets.only(left: 8, right: 8),
-            child: Obx(() => ListView.separated(
-                  separatorBuilder: (context, index) => const SizedBox(
-                    width: 10,
-                  ),
-                  itemCount: paths.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) => FileItem(
-                    file: paths[index],
-                    onClear: onClear,
-                  ),
-                )),
           ),
           Expanded(
             child: Padding(
